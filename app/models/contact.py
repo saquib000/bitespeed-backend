@@ -1,4 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from typing import Optional
+from sqlalchemy import String, DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -6,14 +8,30 @@ from app.database import Base
 class Contact(Base):
     __tablename__ = "contacts"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
-    email = Column(String, index=True, nullable=True)
-    phoneNumber = Column(String, index=True, nullable=True)
+    email: Mapped[Optional[str]] = mapped_column(String, index=True, nullable=True)
+    phoneNumber: Mapped[Optional[str]] = mapped_column(String, index=True, nullable=True)
 
-    linkedId = Column(Integer, ForeignKey("contacts.id"), nullable=True)
-    linkPrecedence = Column(String, nullable=False)
+    linkedId: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("contacts.id"),
+        nullable=True
+    )
 
-    createdAt = Column(DateTime(timezone=True), server_default=func.now())
-    updatedAt = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
-    deletedAt = Column(DateTime(timezone=True), nullable=True)
+    linkPrecedence: Mapped[str] = mapped_column(String, nullable=False)
+
+    createdAt: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    updatedAt: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+
+    deletedAt: Mapped[Optional[DateTime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
